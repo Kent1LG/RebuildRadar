@@ -1,8 +1,14 @@
 # Ignore files and directories that should not be included in the extension package
+src/**
+test/**
 node_modules
 dist
-out
 .vscode
+.git
+.gitignore
+.eslintrc.json
+tsconfig.json
+webpack.config.js
 *.test.ts
 *.spec.ts
 *.log
@@ -16,4 +22,3 @@ out
 *.swp
 .DS_Store
 Thumbs.db
-.vscodeignore
