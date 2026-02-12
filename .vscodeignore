@@ -1,0 +1,19 @@
+# Ignore files and directories that should not be included in the extension package
+node_modules
+dist
+out
+.vscode
+*.test.ts
+*.spec.ts
+*.log
+*.map
+*.tsbuildinfo
+*.tgz
+*.zip
+*.tar.gz
+*.bak
+*.tmp
+*.swp
+.DS_Store
+Thumbs.db
+.vscodeignore

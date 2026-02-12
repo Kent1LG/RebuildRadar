@@ -1,0 +1,160 @@
+{
+  "name": "rebuild-radar",
+  "displayName": "RebuildRadar",
+  "description": "Git-based analysis of incoming commits to estimate C++ rebuild impact before you pull",
+  "version": "0.1.0",
+  "publisher": "your-name",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "rebuildRadar.analyze",
+        "title": "RebuildRadar: Analyze",
+        "icon": "$(search)"
+      },
+      {
+        "command": "rebuildRadar.refresh",
+        "title": "RebuildRadar: Refresh",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "rebuildRadar.showReport",
+        "title": "RebuildRadar: Show Report",
+        "icon": "$(open-preview)"
+      },
+      {
+        "command": "rebuildRadar.addIncludePath",
+        "title": "Include in Scan"
+      },
+      {
+        "command": "rebuildRadar.addExcludePath",
+        "title": "Exclude from Scan"
+      },
+      {
+        "command": "rebuildRadar.setProjectFile",
+        "title": "RebuildRadar: Set as Project File"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "rebuildRadar",
+          "title": "RebuildRadar",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "rebuildRadar": [
+        {
+          "id": "rebuildRadarView",
+          "name": "Impact Analysis"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "rebuildRadarView",
+        "contents": "No impact analysis available.\n[Analyze](command:rebuildRadar.analyze)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {          "command": "rebuildRadar.showReport",
+          "when": "view == rebuildRadarView && rebuildRadar.hasReport",
+          "group": "navigation"
+        },
+        {          "command": "rebuildRadar.analyze",
+          "when": "view == rebuildRadarView",
+          "group": "navigation"
+        },
+        {
+          "command": "rebuildRadar.refresh",
+          "when": "view == rebuildRadarView",
+          "group": "navigation"
+        }
+      ],
+      "explorer/context": [
+        {
+          "submenu": "rebuildRadar.submenu",
+          "when": "explorerResourceIsFolder",
+          "group": "rebuildRadar@1"
+        },
+        {
+          "command": "rebuildRadar.setProjectFile",
+          "when": "resourceExtname == .sln || resourceExtname == .vcxproj",
+          "group": "rebuildRadar@2"
+        }
+      ],
+      "rebuildRadar.submenu": [
+        {
+          "command": "rebuildRadar.addIncludePath",
+          "group": "1_scope@1"
+        },
+        {
+          "command": "rebuildRadar.addExcludePath",
+          "group": "1_scope@2"
+        }
+      ]
+    },
+    "submenus": [
+      {
+        "id": "rebuildRadar.submenu",
+        "label": "RebuildRadar"
+      }
+    ],
+    "configuration": {
+      "title": "RebuildRadar",
+      "properties": {
+        "rebuildRadar.projectFile": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Path to a Visual Studio solution (`.sln`) or project (`.vcxproj`) file, relative to the workspace root.\n\nWhen set, only files listed in the project are used as the build scope. This gives accurate rebuild percentages.\n\nExamples: `MyGame.sln`, `Source/MyGame.vcxproj`"
+        },
+        "rebuildRadar.autoScan": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Automatically run impact analysis when VS Code starts. The scan runs silently in the background and uses a cache so only changed files are re-parsed."
+        },
+        "rebuildRadar.includePaths": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [],
+          "markdownDescription": "Directories to scan for C++ files (relative to workspace root). When empty, the entire workspace is scanned.\n\nExamples: `[\"Source\"]`, `[\"src\", \"libs/mylib\"]`, `[\"Source/MyGame\", \"Plugins/MyPlugin\"]`"
+        },
+        "rebuildRadar.excludePaths": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [],
+          "markdownDescription": "Directories to exclude from scanning (relative to workspace root), in addition to the built-in skip list.\n\nExamples: `[\"ThirdParty\", \"Engine\"]`"
+        },
+        "rebuildRadar.moduleDetection": {
+          "type": "string",
+          "default": "auto",
+          "enum": ["auto", "vcxproj", "unreal", "cmake", "directory", "none"],
+          "markdownDescription": "How to detect project modules / libraries.\n\n- **auto** – Try strategies in order: `.vcxproj` (from `projectFile`), `*.Build.cs`, CMake `CMakeLists.txt`, then directory-based fallback.\n- **vcxproj** – Each `.vcxproj` in the solution is a module.\n- **unreal** – Each folder with a `*.Build.cs` file is a module (Unreal Engine convention).\n- **cmake** – Each `CMakeLists.txt` with `add_library`/`add_executable` is a module.\n- **directory** – Top-level subdirectories of `Source/` or `src/`.\n- **none** – Disable module detection."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts",
+    "test": "jest",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "@types/vscode": "^1.74.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "simple-git": "^3.22.0"
+  }
+}
