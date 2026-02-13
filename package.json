@@ -2,7 +2,7 @@
   "name": "rebuild-radar",
   "displayName": "RebuildRadar",
   "description": "Git-based analysis of incoming commits to estimate C++ rebuild impact before you pull",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "publisher": "Kent1LG",
   "repository": {
     "type": "git",

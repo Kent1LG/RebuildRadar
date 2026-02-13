@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.0.0] — 2026-02-13
+
 ### Added
 - Git-based C++ rebuild impact analysis — uses `git fetch`, `git log`, and `git diff-tree` to detect incoming changes and estimate rebuild scope via `#include` dependency graph.
 - Iterative BFS dependency scanner with symlink-cycle detection and 500 k directory safety valve.
