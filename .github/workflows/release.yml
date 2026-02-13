@@ -5,6 +5,10 @@ on:
     tags:
       - 'v*'
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag (e.g. v1.0.0)'
+        required: true
 
 permissions:
   contents: write
@@ -13,23 +17,39 @@ permissions:
 jobs:
   create-release:
     runs-on: ubuntu-latest
+    env:
+      RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
+      - name: Create and push tag
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git rev-parse "$RELEASE_TAG" >/dev/null 2>&1; then
+            echo "Tag $RELEASE_TAG already exists"
+            exit 1
+          fi
+          git tag "$RELEASE_TAG"
+          git push origin "$RELEASE_TAG"
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ env.RELEASE_TAG }}
+          name: RebuildRadar ${{ env.RELEASE_TAG }}
           generate_release_notes: true
           body: |
-            ## RebuildRadar ${{ github.ref_name }}
+            ## RebuildRadar ${{ env.RELEASE_TAG }}
 
             See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details.
 
       - name: Trigger Publish workflow
         run: |
-          gh workflow run publish.yml --ref "${GITHUB_REF_NAME}"
+          gh workflow run publish.yml --ref "$RELEASE_TAG"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
