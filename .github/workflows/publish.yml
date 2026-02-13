@@ -5,6 +5,9 @@ on:
     types:
       - created
 
+permissions:
+  contents: write
+
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -28,3 +31,13 @@ jobs:
         run: npm run deploy
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
+
+      - name: Package VSIX
+        if: success()
+        run: npx @vscode/vsce package --out rebuild-radar-${{ github.event.release.tag_name }}.vsix
+
+      - name: Upload VSIX to release
+        if: success()
+        uses: softprops/action-gh-release@v2
+        with:
+          files: rebuild-radar-${{ github.event.release.tag_name }}.vsix
