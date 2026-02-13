@@ -20,7 +20,7 @@ A Visual Studio Code extension that uses **git** to analyze incoming commits and
 
 ```bash
 git clone <repository-url>
-cd ue-change-impact-estimator
+cd RebuildRadar
 npm install
 ```
 
