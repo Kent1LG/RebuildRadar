@@ -23,15 +23,7 @@ module.exports = {
         ]
     },
     plugins: [
-        new CleanWebpackPlugin(),
-        new CopyWebpackPlugin({
-            patterns: [
-                { from: 'media', to: 'media' },
-                { from: 'package.json', to: 'package.json' },
-                { from: 'README.md', to: 'README.md' },
-                { from: 'CHANGELOG.md', to: 'CHANGELOG.md' }
-            ]
-        })
+        new CleanWebpackPlugin()
     ],
     devtool: 'source-map',
     target: 'node',

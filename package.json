@@ -4,10 +4,28 @@
   "description": "Git-based analysis of incoming commits to estimate C++ rebuild impact before you pull",
   "version": "1.0.0",
   "publisher": "Kent1LG",
+  "license": "MIT",
+  "icon": "media/icon.png",
+  "homepage": "https://github.com/Kent1LG/RebuildRadar#readme",
+  "bugs": {
+    "url": "https://github.com/Kent1LG/RebuildRadar/issues"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/Kent1LG/RebuildRadar"
   },
+  "keywords": [
+    "c++",
+    "cpp",
+    "rebuild",
+    "build",
+    "git",
+    "impact-analysis",
+    "dependency-graph",
+    "include",
+    "visual-studio",
+    "unreal-engine"
+  ],
   "engines": {
     "vscode": "^1.74.0"
   },
@@ -169,7 +187,10 @@
     "pretest": "tsc -p tsconfig.test.json",
     "lint": "eslint src --ext ts",
     "test": "vscode-test",
-    "deploy": "vsce publish"
+    "deploy": "vsce publish",
+    "release:patch": "npm version patch -m 'release: v%s' && git push && git push --tags",
+    "release:minor": "npm version minor -m 'release: v%s' && git push && git push --tags",
+    "release:major": "npm version major -m 'release: v%s' && git push && git push --tags"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
