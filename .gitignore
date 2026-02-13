@@ -17,3 +17,5 @@ Desktop.ini
 *.swp
 *.swo
 *~
+.vscode-test
+.vscode

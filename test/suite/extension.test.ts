@@ -1,40 +1,43 @@
-import { expect } from 'chai';
-import { analyzeCommits } from '../../src/commands/analyzeCommits';
-import { GitService } from '../../src/git/gitService';
+import * as assert from 'assert';
 import { ImpactEstimator } from '../../src/analysis/impactEstimator';
-import { ChangeAnalyzer } from '../../src/analysis/changeAnalyzer';
+import { CommitParser } from '../../src/git/commitParser';
+import { FileChange } from '../../src/models/fileChange';
 
-describe('Extension Tests', () => {
-    let gitService: GitService;
-    let impactEstimator: ImpactEstimator;
-    let changeAnalyzer: ChangeAnalyzer;
+describe('Extension Integration', () => {
+    it('should wire ImpactEstimator and CommitParser together', () => {
+        const rawCommit = {
+            hash: 'abcdef1234567890abcdef1234567890abcdef12',
+            message: 'Changed renderer',
+            author: 'Dev',
+            date: '2026-02-13',
+        };
+        const files: FileChange[] = [
+            { filePath: 'Source/Renderer/Draw.cpp', changeType: 'modified' },
+            { filePath: 'Source/Renderer/Draw.h', changeType: 'modified' },
+        ];
 
-    beforeEach(() => {
-        gitService = new GitService();
-        impactEstimator = new ImpactEstimator();
-        changeAnalyzer = new ChangeAnalyzer();
+        const commit = CommitParser.toCommitInfo(rawCommit, files);
+        assert.strictEqual(commit.affectedFiles.length, 2);
+
+        // Simulate: 2 files affected out of 50 total project files
+        const impact = ImpactEstimator.calculatePercentage(commit.affectedFiles.length, 50);
+        assert.strictEqual(impact, 4);
+        assert.ok(impact > 0);
+        assert.ok(impact <= 100);
     });
 
-    it('should analyze commits and estimate impact', async () => {
-        const commits = await gitService.getCommitHistory();
-        const changes = await changeAnalyzer.analyzeCommits(commits);
-        const impactReport = impactEstimator.estimateImpact(changes);
+    it('should handle zero affected files', () => {
+        const rawCommit = {
+            hash: 'abcdef1234567890abcdef1234567890abcdef12',
+            message: 'Docs only',
+            author: 'Dev',
+            date: '2026-02-13',
+        };
 
-        expect(impactReport).to.have.property('affectedModules');
-        expect(impactReport).to.have.property('impactPercentage');
-        expect(impactReport.impactPercentage).to.be.a('number');
+        const commit = CommitParser.toCommitInfo(rawCommit, []);
+        assert.strictEqual(commit.affectedFiles.length, 0);
+
+        const impact = ImpactEstimator.calculatePercentage(0, 50);
+        assert.strictEqual(impact, 0);
     });
-
-    it('should handle no commits gracefully', async () => {
-        const commits = [];
-        const changes = await changeAnalyzer.analyzeCommits(commits);
-        const impactReport = impactEstimator.estimateImpact(changes);
-
-        expect(impactReport).to.deep.equal({
-            affectedModules: [],
-            impactPercentage: 0
-        });
-    });
-
-    // Additional tests can be added here
 });

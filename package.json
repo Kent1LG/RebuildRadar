@@ -11,7 +11,9 @@
   "engines": {
     "vscode": "^1.74.0"
   },
-  "categories": ["Other"],
+  "categories": [
+    "Other"
+  ],
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
@@ -69,11 +71,13 @@
     ],
     "menus": {
       "view/title": [
-        {          "command": "rebuildRadar.showReport",
+        {
+          "command": "rebuildRadar.showReport",
           "when": "view == rebuildRadarView && rebuildRadar.hasReport",
           "group": "navigation"
         },
-        {          "command": "rebuildRadar.analyze",
+        {
+          "command": "rebuildRadar.analyze",
           "when": "view == rebuildRadarView",
           "group": "navigation"
         },
@@ -127,20 +131,31 @@
         },
         "rebuildRadar.includePaths": {
           "type": "array",
-          "items": { "type": "string" },
+          "items": {
+            "type": "string"
+          },
           "default": [],
           "markdownDescription": "Directories to scan for C++ files (relative to workspace root). When empty, the entire workspace is scanned.\n\nExamples: `[\"Source\"]`, `[\"src\", \"libs/mylib\"]`, `[\"Source/MyGame\", \"Plugins/MyPlugin\"]`"
         },
         "rebuildRadar.excludePaths": {
           "type": "array",
-          "items": { "type": "string" },
+          "items": {
+            "type": "string"
+          },
           "default": [],
           "markdownDescription": "Directories to exclude from scanning (relative to workspace root), in addition to the built-in skip list.\n\nExamples: `[\"ThirdParty\", \"Engine\"]`"
         },
         "rebuildRadar.moduleDetection": {
           "type": "string",
           "default": "auto",
-          "enum": ["auto", "vcxproj", "unreal", "cmake", "directory", "none"],
+          "enum": [
+            "auto",
+            "vcxproj",
+            "unreal",
+            "cmake",
+            "directory",
+            "none"
+          ],
           "markdownDescription": "How to detect project modules / libraries.\n\n- **auto** – Try strategies in order: `.vcxproj` (from `projectFile`), `*.Build.cs`, CMake `CMakeLists.txt`, then directory-based fallback.\n- **vcxproj** – Each `.vcxproj` in the solution is a module.\n- **unreal** – Each folder with a `*.Build.cs` file is a module (Unreal Engine convention).\n- **cmake** – Each `CMakeLists.txt` with `add_library`/`add_executable` is a module.\n- **directory** – Top-level subdirectories of `Source/` or `src/`.\n- **none** – Disable module detection."
         }
       }
@@ -151,15 +166,19 @@
     "build": "tsc -p ./",
     "build:webpack": "webpack --mode production",
     "watch": "tsc -watch -p ./",
+    "pretest": "tsc -p tsconfig.test.json",
     "lint": "eslint src --ext ts",
-    "test": "jest",
-    "package": "vsce package"
+    "test": "vscode-test"
   },
   "devDependencies": {
+    "@types/mocha": "^10.0.10",
     "@types/node": "^18.0.0",
     "@types/vscode": "^1.74.0",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2",
     "clean-webpack-plugin": "^4.0.0",
     "copy-webpack-plugin": "^12.0.0",
+    "mocha": "^11.7.5",
     "ts-loader": "^9.5.0",
     "typescript": "^5.0.0",
     "webpack": "^5.90.0",

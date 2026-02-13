@@ -1,6 +1,5 @@
-import { expect } from 'chai';
+import * as assert from 'assert';
 import { ModuleResolver } from '../../src/analysis/moduleResolver';
-import { ModuleDescriptor } from '../../src/models/moduleDescriptor';
 
 describe('ModuleResolver', () => {
     let resolver: ModuleResolver;
@@ -9,13 +8,12 @@ describe('ModuleResolver', () => {
         resolver = new ModuleResolver('.');
     });
 
-    it('should resolve module dependencies correctly', () => {
-        const moduleA: ModuleDescriptor = { name: 'ModuleA', path: 'src/A', type: 'directory', files: new Set(), dependencies: ['ModuleB'] } as any;
-        const moduleB: ModuleDescriptor = { name: 'ModuleB', path: 'src/B', type: 'directory', files: new Set(), dependencies: [] } as any;
-        // TODO: add proper module resolver tests once API stabilizes
+    it('should start with no modules detected', () => {
+        assert.strictEqual(resolver.getModules().size, 0);
     });
 
-    it('should return empty modules when none detected', () => {
-        expect(resolver.getModules().size).to.equal(0);
+    it('should return null for unknown file modules', () => {
+        const result = resolver.resolveFileModule('nonexistent/file.cpp');
+        assert.strictEqual(result, null);
     });
 });
